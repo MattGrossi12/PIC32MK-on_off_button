@@ -8,15 +8,14 @@
 
 Este projeto implementa uma aplicação embarcada para o **PIC32MK0128MCA048** que realiza a leitura do sensor analógico de distância **Sharp GP2Y0A02YK0F** por meio do canal **AN0** e utiliza o valor convertido para:
 
+![GP2Y0A02YK0F](https://raw.githubusercontent.com/MattGrossi12/PIC32MK-analog_read_example/main/images/sensor_model.png)
+
 - calcular a tensão equivalente na entrada do ADC;
 - estimar a distância em centímetros;
 - classificar a leitura em faixas de tensão;
 - acionar três LEDs de indicação conforme a região de operação configurada no firmware.
 
 A aplicação foi organizada de forma modular, separando a configuração de periféricos, o tratamento de interrupções, a aquisição ADC, a lógica de saídas e a configuração de pinos.
-
-**Autor:** Matheus Grossi  
-**Atualização da documentação:** 17 de março de 2026
 
 ---
 
@@ -38,9 +37,9 @@ Também é recomendado pelo fabricante o uso de **capacitor de bypass de 10 µF 
 
 O firmware coleta amostras do canal analógico **AN0**, converte o valor digital em tensão e estima a distância a partir da curva polinomial atualmente implementada no código:
 
-\[
+$$
 f(V) = 1.720473 \cdot V^3 + 4.15228 \cdot V^2 - 59.8489 \cdot V + 117.313
-\]
+$$
 
 ![Curva característica do sensor](https://raw.githubusercontent.com/MattGrossi12/PIC32MK-analog_read_example/main/images/sensor_curve.jpeg)
 
