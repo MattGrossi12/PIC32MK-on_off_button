@@ -1,54 +1,73 @@
+/* 
+ * File:   main.c
+ * Author: Matheus Grossi
+ * Created on 13 de Fevereiro de 2026, 14:11
+ */
+
 #define _CONFIG_BITS_SOURCE
+
 #include "defs.h"
-#include "adc_1.h"
-#include "pins.h"
 
-void init_OSC(void)
-{
-    SYSKEY = 0x00000000;
-    SYSKEY = 0xAA996655;
-    SYSKEY = 0x556699AA;
+#include <xc.h>
+#include <stdint.h>
+#include <sys/attribs.h>
 
-    /* PBCLK2 = SYSCLK / 1 */
-    PB2DIVbits.PBDIV = 0;
+#define BT_LIG PORTBbits.RB1
+#define BT_DES PORTBbits.RB2 
 
-    SYSKEY = 0x33333333;
+#define led_verd_state LATBbits.LATB10
+#define led_verm_state LATBbits.LATB13
+
+int state = 0;
+
+int init(void){
+
+    CFGCONbits.JTAGEN = 0;
+
+    TRISBbits.TRISB1 = 1;
+    TRISBbits.TRISB2 = 1;
+    TRISBbits.TRISB10 = 0;
+    TRISBbits.TRISB13 = 0;
+    
+    ANSELBbits.ANSB1 = 0;
+    ANSELBbits.ANSB2 = 0;
+
+    //RB10 e RB13 nao tem modo analogico
+    //ANSELBbits.ANSB10 = 0;
+    //ANSELBbits.ANSB13 = 0;
+    
+    LATBbits.LATB10 = 0;
+    LATBbits.LATB13 = 1;
 }
 
-void init_TMR2(void)
-{
-    PR2 = 250000u - 16u;
+int mode_off(void){
+    delay_ms(50);
+    led_verd_state = 0;
+    led_verm_state = 1;
+}
 
-    T2CONbits.ON = 0;
-    T2CONbits.TCKPS = 4;
-    T2CONbits.TCS = 0;
-    T2CONbits.T32 = 1;
+int mode_on(void){
+    delay_ms(50);
+    led_verd_state = 1;
+    led_verm_state = 0;
+}
 
-    IPC2bits.T2IP = 1;
-    IFS0bits.T2IF = 0;
-    IEC0bits.T2IE = 1;
-
-    T2CONbits.ON = 1;
+int operation(void){
+    if ( BT_DES ) { // Operacao de liga
+        mode_off();
+    }
+    else
+    if ( BT_LIG ) { // Operacao de desliga
+        mode_on();
+    }
 }
 
 int main(void)
 {
-    Pins_Init();
-    init_OSC();
-    init_TMR2();
-    init_ADC();
-
-    INTCONSET = _INTCON_MVEC_MASK;
-    __builtin_enable_interrupts();
-
-    while (1)
-    {
-        if (g_adc0_new_sample != 0u)
-        {
-            g_adc0_new_sample = 0u;
-            analog_process_sample();
-        }
-    }
-
-    return 0;
+    init();
+    
+    while(1)
+            {
+                operation();
+            }
 }

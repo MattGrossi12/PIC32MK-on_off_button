@@ -1,10 +1,12 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-/*
- * Habilite _CONFIG_BITS_SOURCE em apenas UM arquivo .c
- * antes de incluir este header, para emitir os config bits.
- */
+#include <xc.h>
+#include <stdint.h>
+
+#define SYSCLK_HZ 12000000UL
+
+// Colocar config bits APENAS quando _CONFIG_BITS_SOURCE estiver definido
 #ifdef _CONFIG_BITS_SOURCE
 
 // PIC32MK0128MCA048 Configuration Bit Settings
@@ -69,26 +71,6 @@
 
 #endif // _CONFIG_BITS_SOURCE
 
-#include <xc.h>
-#include <sys/attribs.h>
-#include <stdint.h>
+void delay_ms(uint32_t ms);
 
-#define ADC_REFERENCE_VOLTAGE   3.3f
-#define ADC_MAX_COUNTS          4095.0f
-
-/* Curva polinomial da distância em função da tensão do sensor:
- * f(V) = 1.720473*V^3 + 4.15228*V^2 - 59.8489*V + 117.313
- */
-#define DIST_POLY_A             1.720473f
-#define DIST_POLY_B             4.15228f
-#define DIST_POLY_C            -59.8489f
-#define DIST_POLY_D             117.313f
-
-/* Faixa válida de medição do sensor em centímetros. */
-#define DIST_MIN_VALID_CM       10.0f
-#define DIST_MAX_VALID_CM       80.0f
-
-void init_OSC(void);
-void init_TMR2(void);
-
-#endif /* DEFS_H */
+#endif // DEFS_H

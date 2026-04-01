@@ -1,10 +1,12 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-/*
- * Habilite _CONFIG_BITS_SOURCE em apenas UM arquivo .c
- * antes de incluir este header, para emitir os config bits.
- */
+#include <xc.h>
+#include <stdint.h>
+
+#define SYSCLK_HZ 12000000UL
+
+// Colocar config bits APENAS quando _CONFIG_BITS_SOURCE estiver definido
 #ifdef _CONFIG_BITS_SOURCE
 
 // PIC32MK0128MCA048 Configuration Bit Settings
@@ -67,12 +69,8 @@
 #pragma config TSEQ = 0xFFFF
 #pragma config CSEQ = 0xFFFF
 
-#endif /* _CONFIG_BITS_SOURCE */
+#endif // _CONFIG_BITS_SOURCE
 
-#include <xc.h>
-#include <sys/attribs.h>
-#include <stdint.h>
+void delay_ms(uint32_t ms);
 
-void init_OSC(void);
-
-#endif /* DEFS_H */
+#endif // DEFS_H
